@@ -107,13 +107,14 @@ public class AudioPlayer implements OnCompletionListener, OnPreparedListener, On
     }
 
     private String generateTempFile() {
-      String tempFileName = null;
+      String tempDir = null;
       if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-          tempFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmprecording-" + System.currentTimeMillis() + ".3gp";
+          tempDir = this.handler.cordova.getContext().getExternalCacheDir().getAbsolutePath();
       } else {
-          tempFileName = "/data/data/" + handler.cordova.getActivity().getPackageName() + "/cache/tmprecording-" + System.currentTimeMillis() + ".3gp";
+          tempDir = this.handler.cordova.getContext().getCacheDir().getAbsolutePath();
       }
-      return tempFileName;
+
+      return tempDir + File.separator + "tmprecording-" + System.currentTimeMillis() + ".3gp";
     }
 
     /**
@@ -185,11 +186,14 @@ public class AudioPlayer implements OnCompletionListener, OnPreparedListener, On
         /* this is a hack to save the file as the specified name */
 
         if (!file.startsWith("/")) {
+            String storageDir = null;
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                file = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + file;
+                storageDir = this.handler.cordova.getContext().getExternalFilesDir(null).getAbsolutePath();
             } else {
-                file = "/data/data/" + handler.cordova.getActivity().getPackageName() + "/cache/" + file;
+                storageDir = this.handler.cordova.getContext().getFilesDir().getAbsolutePath();
             }
+
+            file = storageDir + File.separator + file;
         }
 
         int size = this.tempFiles.size();
